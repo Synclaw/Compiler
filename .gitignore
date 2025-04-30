@@ -1,4 +1,3 @@
 .vscode/
-IO/
 build/
-parser
+littlec_compiler

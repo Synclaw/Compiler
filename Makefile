@@ -1,35 +1,45 @@
-# 编译器及编译选项
-CXX       := g++
-CXXFLAGS  := -Wall -std=c++17 -g -Iinclude
+# Makefile for littlec_compiler
 
-# 目标可执行文件名称
-TARGET    := parser
+# 编译器和编译选项
+CXX := g++
+CXXFLAGS := -std=c++17 -Wall -Iinclude
 
-# 目录结构
-SRC_DIR   := src
-BUILD_DIR := build
+# 项目结构
+SRC_DIR := src
+INC_DIR := include
+OUT_DIR := output
+OBJ_DIR := build
 
-# 源文件列表（在 src/ 下）
-SOURCES   := $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS   := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
+# 源文件列表
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 
-.PHONY: all clean
+# 对应的目标文件列表（放在 build/ 下）
+OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
-# 默认目标：生成可执行文件
-all: $(BUILD_DIR) $(TARGET)
+# 最终可执行文件
+TARGET := littlec_compiler
 
-# 创建构建目录
-$(BUILD_DIR):
-	@mkdir -p $@
+# 默认目标
+all: $(TARGET)
 
-# 链接可执行文件
-$(TARGET): $(OBJECTS)
+# 链接目标文件生成可执行文件
+$(TARGET): $(OBJS) | $(OUT_DIR)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# 编译规则：将 .cpp 文件编译到 build/ 下的 .o 文件
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
+# 编译每个源文件为目标文件
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# 清除编译生成的文件
+# 确保 build 和 output 目录存在
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
+# 清理目标
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(OBJ_DIR) $(OUT_DIR)/littlec_compiler
+
+# 伪目标
+.PHONY: all clean

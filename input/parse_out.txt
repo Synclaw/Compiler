@@ -1,0 +1,4 @@
+Program
+  Decl int x
+  Assign x
+    Literal 42
